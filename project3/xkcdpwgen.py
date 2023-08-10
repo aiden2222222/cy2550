@@ -1,0 +1,59 @@
+import random
+import string
+import argparse
+
+
+def load_word_list(filename):
+    with open(filename, 'r') as file:
+        return [line.strip() for line in file]
+
+
+def generate_password(word_list, num_words, num_numbers, num_symbols, capitalize_count=1):
+    password_words = random.sample(word_list, num_words)
+
+    capitalize_indices = random.sample(range(num_words), min(capitalize_count, num_words))
+    password_words = [
+        word.capitalize() if idx in capitalize_indices else word
+        for idx, word in enumerate(password_words)
+    ]
+
+    for _ in range(num_numbers):
+        password_words.insert(random.randint(0, len(password_words)), str(random.randint(0, 9)))
+
+    for _ in range(num_symbols):
+        password_words.insert(random.randint(0, len(password_words)), random.choice(string.punctuation))
+
+    password = "".join(password_words)
+    return password
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Generate passwords using common English words.")
+    parser.add_argument("-w", "--words", dest="num_words", type=int, default=4, help="include WORDS words in the password (default=4)")
+    parser.add_argument("-n", "--numbers", dest="num_numbers", type=int, default=0, help="insert NUMBERS random numbers in the password")
+    parser.add_argument("-s", "--symbols", dest="num_symbols", type=int, default=0, help="insert SYMBOLS random symbols in the password")
+    parser.add_argument("-c", "--caps", dest="capitalize", type=int, default=0, help="Capitalize the first letter of CAPS random words")
+    parser.add_argument("-h", "--help", dest="help_menu", action="store_true", help="Show this help message and exit")
+
+    args = parser.parse_args()
+
+    if args.help_menu:
+        print("Help Menu:")
+        print("  -h, --help         : Show this help message and exit")
+        print("  -w, --words        : include WORDS words in the password (default=4)")
+        print("  -c, --caps         : Capitalize the first letter of CAPS random words")
+        print("  -n, --numbers      : insert NUMBERS random numbers in the password")
+        print("  -s, --symbols      : insert SYMBOLS random symbols in the password")
+        return
+
+    words_filename = "words.txt"
+    word_list = load_word_list(words_filename)
+
+    password = generate_password(
+        word_list, args.num_words, args.num_numbers, args.num_symbols, args.capitalize
+    )
+    print("Generated Password:", password)
+
+
+if __name__ == "__main__":
+    main()
