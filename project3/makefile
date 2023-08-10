@@ -1,7 +1,7 @@
 .PHONY: run help
 
 run:
-     python xkcdpwgen.py $(ARGS)
+     python xkcdpwgen $(ARGS)
 
 help:
-     python xkcdpwgen.py -h
+     python xkcdpwgen -h
